@@ -2,6 +2,7 @@
 
 from socket import AF_INET, socket, SOCK_STREAM
 from threading import Thread
+import time
 
 def accept_connection():
     while True:
@@ -15,7 +16,6 @@ def accept_connection():
 def manage_client(client):
     name = client.recv(BUFFSIZE).decode("utf8")
     if name in clients.values():     # If name already exists in chat
-        print("name already exist")
         name = create_unique_name(name)
         new_name_msg = "Your name was changed to %s, because the original one was already taken.\n" % name
         client.send(bytes(new_name_msg, "utf8"))
@@ -28,7 +28,8 @@ def manage_client(client):
     while True:
         msg = client.recv(BUFFSIZE).decode("utf8")
         if msg != "{quit}":
-            formatted_msg = "[%s]: %s" % (name, msg)
+            curr_time = time.strftime("%H:%M", time.localtime())
+            formatted_msg = "[%s] %s: %s" % (curr_time, name, msg)
             print(formatted_msg)
             broadcast(formatted_msg)
         else:
@@ -57,7 +58,7 @@ clients = {}
 addresses = {}
 
 HOST = '127.0.0.1'
-PORT = 5301
+PORT = 5300
 BUFFSIZE = 1024
 ADDR = (HOST,PORT)
 
