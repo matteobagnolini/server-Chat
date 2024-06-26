@@ -25,14 +25,17 @@ def manage_client(client):
         if msg != "{quit}":
             formatted_msg = "[%s]: %s" % (name, msg)
             print(formatted_msg)
-            broadcast(bytes(formatted_msg, "utf8"))
+            broadcast(formatted_msg)
         else:
             client.send(bytes("Goodbye!", "utf8"))
             client.close()
             del clients[client]
-            broadcast(bytes("%s has left the chat." % name, "utf8"))
+            quit_msg = "%s has left the chat." % name
+            broadcast(quit_msg)
+            print(quit_msg)
+            break
             
-def broadcast(msg): #TODO: add name prefix here instead of in manage_client
+def broadcast(msg):
     for client in clients:
         client.send(bytes("%s" % msg, "utf8"))
 
@@ -40,7 +43,7 @@ clients = {}
 addresses = {}
 
 HOST = '127.0.0.1'
-PORT = 5300
+PORT = 5301
 BUFFSIZE = 1024
 ADDR = (HOST,PORT)
 

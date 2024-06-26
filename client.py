@@ -8,6 +8,7 @@ def receive():
         try:
         
             msg = client_socket.recv(BUFFSIZE).decode("utf8")
+            print(msg)
             msg_list.insert(tkt.END, msg)
         
         except OSError:
@@ -60,11 +61,11 @@ window.protocol("WM_DELETE_WINDOW", on_closing)
 #HOST = input("Server host: ")
 #PORT = input("Server port: ")
 HOST = "127.0.0.1"
-PORT = 5300
+PORT = 5301
 
 
 if not PORT:        # Invalid port
-    PORT = 5300
+    PORT = 5301
 else:
     PORT = int(PORT)
 
