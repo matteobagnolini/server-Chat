@@ -14,6 +14,11 @@ def accept_connection():
 
 def manage_client(client):
     name = client.recv(BUFFSIZE).decode("utf8")
+    if name in clients.values():     # If name already exists in chat
+        print("name already exist")
+        name = create_unique_name(name)
+        new_name_msg = "Your name was changed to %s, because the original one was already taken." % name
+        client.send(bytes(new_name_msg, "utf8"))
     clients[client] = name
     welcome = "Welcome to the chat, %s . Write {quit} to quit the chat" % name
     client.send(bytes(welcome, "utf8"))
@@ -38,6 +43,15 @@ def manage_client(client):
 def broadcast(msg):
     for client in clients:
         client.send(bytes("%s" % msg, "utf8"))
+
+def create_unique_name(name):
+    original_name = name
+    count = 1
+    
+    while name in clients.values():
+        name = f"{original_name}_{count}"
+        count += 1
+    return name
 
 clients = {}
 addresses = {}

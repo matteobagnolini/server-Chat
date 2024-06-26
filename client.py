@@ -9,7 +9,7 @@ def receive():
         
             msg = client_socket.recv(BUFFSIZE).decode("utf8")
             print(msg)
-            msg_list.insert(tkt.END, msg)
+            msg_list.insert(tkt.END, msg +"\n")
         
         except OSError:
             break
@@ -40,7 +40,8 @@ my_msg.set("Insert here your text")
 scrollbar = tkt.Scrollbar(message_frame)
 
 # Messages box
-msg_list = tkt.Listbox(message_frame, height=15, width=50, yscrollcommand=scrollbar.set)
+msg_list = tkt.Text(message_frame, height=30, width=75, yscrollcommand=scrollbar.set, wrap=tkt.WORD)
+scrollbar.config(command=msg_list.yview)
 scrollbar.pack(side=tkt.RIGHT, fill=tkt.Y)
 msg_list.pack(side=tkt.LEFT, fill=tkt.BOTH)
 msg_list.pack()
