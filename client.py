@@ -2,7 +2,7 @@ from socket import socket, AF_INET, SOCK_STREAM
 from threading import Thread
 import tkinter as tkt
 
-# Method to receive messages from server
+# Method to receive messages from server.
 def receive():
     while True:
         try:
@@ -12,7 +12,7 @@ def receive():
         except OSError:
             break
 
-# Method to send message to the chat
+# Method to send message to the chat.
 def send(event=None):
     msg = my_msg.get()
     my_msg.set("")
@@ -29,7 +29,7 @@ def on_closing(event=None):
     my_msg.set("{quit}")
     send()
 
-
+# Method to start the chat main application.
 def start_chat():
     global HOST, PORT, ADDR, BUFFSIZE
     

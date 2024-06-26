@@ -5,6 +5,8 @@ import sys
 from threading import Thread
 import time
 
+# This method accepts connections from clients.
+# It creates a new Thread for each client connected.
 def accept_connection():
     while True:
         try:
@@ -16,9 +18,9 @@ def accept_connection():
             Thread(target = manage_client, args = (client,)).start() # New thread for each connection
         except OSError:
             print("Error in accepting new connections.")
-            break
+            sys.exit()
         
-
+# This method manages the client.
 def manage_client(client):
     name = client.recv(BUFFSIZE).decode("utf8")
     if name in clients.values():     # If name already exists in chat
@@ -33,7 +35,7 @@ def manage_client(client):
     print(join_msg)
     broadcast(join_msg)
 
-    while True:
+    while True:     # Receiving messages from client
         try:
             msg = client.recv(BUFFSIZE).decode("utf8")
             if msg != "{quit}":
@@ -44,23 +46,31 @@ def manage_client(client):
             else:
                 client.send(bytes("Goodbye!", "utf8"))
                 client.close()
-                del clients[client]
-                quit_msg = "%s has left the chat." % name
-                broadcast(quit_msg)
-                print(quit_msg)
+                remove_client(client)
                 break
         except OSError:
-            print("Error while receiving messages from users.")
+            print("Error while receiving messages from user %s." % clients[client])
+            remove_client(client)
             break
-            
+
+# This method broadcasts a message to all the clients connected to the chat.
 def broadcast(msg):
     for client in clients:
         try:
             client.send(bytes("%s" % msg, "utf8"))
         except OSError:
             print("Error while sending message to client.")
-            break
+            remove_client(client)
 
+# This method removes a client from the chat.
+def remove_client(client):
+    quit_msg = "%s has left the chat." % clients[client]
+    del clients[client]
+    print(quit_msg)
+    broadcast(quit_msg)    
+
+# This method is used to create an unique name.
+# It should be used when a client choose a nickname which is already taken.
 def create_unique_name(name):
     original_name = name
     count = 1
@@ -78,7 +88,7 @@ PORT = 5300
 BUFFSIZE = 1024
 ADDR = (HOST,PORT)
 
-SERVER = socket(AF_INET, SOCK_STREAM)
+SERVER = socket(AF_INET, SOCK_STREAM)   # Server socket initialization
 try:
     SERVER.bind(ADDR)
 except OSError:
