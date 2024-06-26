@@ -84,7 +84,7 @@ clients = {}
 addresses = {}
 
 HOST = '127.0.0.1'
-PORT = 5300
+PORT = 53000
 BUFFSIZE = 1024
 ADDR = (HOST,PORT)
 
@@ -92,7 +92,7 @@ SERVER = socket(AF_INET, SOCK_STREAM)   # Server socket initialization
 try:
     SERVER.bind(ADDR)
 except OSError:
-    print("Error while create a new bind with server.\nAborting..")
+    print("Error while create a new bind with server.\nAborting...")
     sys.exit()
 
 if __name__ == "__main__":

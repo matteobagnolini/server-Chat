@@ -1,4 +1,5 @@
 from socket import socket, AF_INET, SOCK_STREAM
+import sys
 from threading import Thread
 import tkinter as tkt
 
@@ -19,7 +20,8 @@ def send(event=None):
     try:
         client_socket.send(bytes(msg, "utf8"))
     except OSError:
-        print("Error in sending message.")
+        print("Error in sending message.\nAborting...")
+        sys.exit()
     if msg == "{quit}":
         client_socket.close()
         window.destroy()
@@ -95,7 +97,7 @@ def start_main_application():
 
     tkt.mainloop()
 
-# Start window
+# Start setup window
 start_window = tkt.Tk()
 start_window.title("Setup")
 
