@@ -49,6 +49,7 @@ message_frame.pack()
 
 # Input field
 entry_field = tkt.Entry(window, textvariable=my_msg)
+entry_field.bind("<FocusIn>", lambda event: entry_field.delete(0, tkt.END) if entry_field.get() == "Insert here your text" else None)
 entry_field.bind("<Return>", send)
 entry_field.pack()
 
