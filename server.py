@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from socket import AF_INET, socket, SOCK_STREAM
+import sys
 from threading import Thread
 import time
 
@@ -81,7 +82,8 @@ SERVER = socket(AF_INET, SOCK_STREAM)
 try:
     SERVER.bind(ADDR)
 except OSError:
-    print("Error while create a new bind with server.")
+    print("Error while create a new bind with server.\nAborting..")
+    sys.exit()
 
 if __name__ == "__main__":
     SERVER.listen(10)

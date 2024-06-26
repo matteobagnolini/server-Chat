@@ -6,11 +6,9 @@ import tkinter as tkt
 def receive():
     while True:
         try:
-        
             msg = client_socket.recv(BUFFSIZE).decode("utf8")
             print(msg)
-            msg_list.insert(tkt.END, msg +"\n")
-        
+            msg_list.insert(tkt.END, msg + "\n")
         except OSError:
             break
 
@@ -18,7 +16,10 @@ def receive():
 def send(event=None):
     msg = my_msg.get()
     my_msg.set("")
-    client_socket.send(bytes(msg, "utf8"))
+    try:
+        client_socket.send(bytes(msg, "utf8"))
+    except OSError:
+        print("Error in sending message.")
     if msg == "{quit}":
         client_socket.close()
         window.destroy()
@@ -82,11 +83,15 @@ def start_main_application():
     window.protocol("WM_DELETE_WINDOW", on_closing)
 
     # Create client socket
-    client_socket = socket(AF_INET, SOCK_STREAM)
-    client_socket.connect(ADDR)
-    # Create new thread for client
-    receive_thread = Thread(target=receive)
-    receive_thread.start()
+    try:
+        client_socket = socket(AF_INET, SOCK_STREAM)
+        client_socket.connect(ADDR)
+        # Create new thread for client
+        receive_thread = Thread(target=receive)
+        receive_thread.start()
+    except OSError:
+        print("Error while initializing connection to server.")
+        window.destroy()
 
     tkt.mainloop()
 
