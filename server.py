@@ -6,12 +6,17 @@ import time
 
 def accept_connection():
     while True:
-        client, client_address = SERVER.accept()  # client is the socket we use to communicate
-        print("%s:%s connected to chat" % client_address)
-        client.send(bytes("Hello, what's your name?","utf8"))
-        addresses[client] = client_address
+        try:
+            client, client_address = SERVER.accept()  # client is the socket we use to communicate
+            print("%s:%s connected to chat" % client_address)
+            client.send(bytes("Hello, what's your name?","utf8"))
+            addresses[client] = client_address
         
-        Thread(target = manage_client, args = (client,)).start() # New thread for each connection
+            Thread(target = manage_client, args = (client,)).start() # New thread for each connection
+        except OSError:
+            print("Error in accepting new connections.")
+            break
+        
 
 def manage_client(client):
     name = client.recv(BUFFSIZE).decode("utf8")
@@ -23,27 +28,37 @@ def manage_client(client):
     welcome = "Welcome to the chat, %s . Write {quit} to quit the chat" % name
     client.send(bytes(welcome, "utf8"))
     
-    print(name, " joined.")
+    join_msg = "%s joined." % name
+    print(join_msg)
+    broadcast(join_msg)
 
     while True:
-        msg = client.recv(BUFFSIZE).decode("utf8")
-        if msg != "{quit}":
-            curr_time = time.strftime("%H:%M", time.localtime())
-            formatted_msg = "[%s] %s: %s" % (curr_time, name, msg)
-            print(formatted_msg)
-            broadcast(formatted_msg)
-        else:
-            client.send(bytes("Goodbye!", "utf8"))
-            client.close()
-            del clients[client]
-            quit_msg = "%s has left the chat." % name
-            broadcast(quit_msg)
-            print(quit_msg)
+        try:
+            msg = client.recv(BUFFSIZE).decode("utf8")
+            if msg != "{quit}":
+                curr_time = time.strftime("%H:%M", time.localtime())
+                formatted_msg = "[%s] %s: %s" % (curr_time, name, msg)
+                print(formatted_msg)
+                broadcast(formatted_msg)
+            else:
+                client.send(bytes("Goodbye!", "utf8"))
+                client.close()
+                del clients[client]
+                quit_msg = "%s has left the chat." % name
+                broadcast(quit_msg)
+                print(quit_msg)
+                break
+        except OSError:
+            print("Error while receiving messages from users.")
             break
             
 def broadcast(msg):
     for client in clients:
-        client.send(bytes("%s" % msg, "utf8"))
+        try:
+            client.send(bytes("%s" % msg, "utf8"))
+        except OSError:
+            print("Error while sending message to client.")
+            break
 
 def create_unique_name(name):
     original_name = name
@@ -63,7 +78,10 @@ BUFFSIZE = 1024
 ADDR = (HOST,PORT)
 
 SERVER = socket(AF_INET, SOCK_STREAM)
-SERVER.bind(ADDR)
+try:
+    SERVER.bind(ADDR)
+except OSError:
+    print("Error while create a new bind with server.")
 
 if __name__ == "__main__":
     SERVER.listen(10)
