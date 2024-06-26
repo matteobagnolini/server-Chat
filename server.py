@@ -17,7 +17,7 @@ def manage_client(client):
     if name in clients.values():     # If name already exists in chat
         print("name already exist")
         name = create_unique_name(name)
-        new_name_msg = "Your name was changed to %s, because the original one was already taken." % name
+        new_name_msg = "Your name was changed to %s, because the original one was already taken.\n" % name
         client.send(bytes(new_name_msg, "utf8"))
     clients[client] = name
     welcome = "Welcome to the chat, %s . Write {quit} to quit the chat" % name
