@@ -64,6 +64,22 @@ Il client è quindi in grado di:
     \item Terminare la connessione con la chatroom
 \end{itemize}
 
+\subsection{Eccezioni}
+Nell'applicativo ho gestito le principali eccezioni che la chat-room (sia lato server che lato client) potrebbe sollevare.\\
+Nel server sono gestire le seguenti eccezioni:
+\begin{itemize}
+    \item Errore nell'accettazione di una nuova connessione
+    \item Errore durante il ricevimento di un messaggio da un client
+    \item Errore durante l'invio di un messaggio verso un client
+    \item Errore durante il binding del server
+\end{itemize}
+Nel client sono gestite le seguenti eccezioni:
+\begin{itemize}
+    \item Errore durante la ricezione di un messaggio dal server
+    \item Errore durante l'invio di un messaggio verso il server
+    \item Errore durante l'inizializzazione della connessione con il server
+\end{itemize}
+
 \newpage
 
 \section{Guida Utente}
